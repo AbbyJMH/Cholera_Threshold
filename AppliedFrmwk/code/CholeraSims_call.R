@@ -13,6 +13,7 @@ library(lhs)
 library(dplyr) 
 library(reshape2)
 library(stringr)
+library(tidyr)
 
 
 # Define Functions --------------------------------------------------------

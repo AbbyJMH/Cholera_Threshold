@@ -6,6 +6,7 @@ library(reshape2) #need for melt for total.inc_long
 
 # runSEIR takes the SEIR model parameters and initial condition 
 # and returns a time series for each group
+# SRI TODO: if you add new parameters, you need to add them to the input for this function
 SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
                        epsilon.a, epsilon.s, epsilon.m.T, epsilon.s.T,
                        alpha.m, alpha.s,
@@ -20,6 +21,7 @@ SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
                        final.only=FALSE){
   
   #If the model is frequency dependent we modify beta based on the total population size
+  # SRI TODO: if you add an additional compartment, you need to add it here
   beta.divisor <- ifelse(freq.dependent,
                          initial.state["S"]+
                            initial.state["E"]+
@@ -32,6 +34,7 @@ SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
                          1)
   
   #create the parameter vector.
+  # SRI TODO: if you add new parameters, you need to add them here
   param <- c(beta.scaled=beta/beta.divisor, sigma=sigma, 
              v.a=v.a, v.m=v.m, v.sh=v.sh, v.abx=v.abx,
              epsilon.a=epsilon.a, epsilon.s=epsilon.s, epsilon.m.T=epsilon.m.T, epsilon.s.T=epsilon.s.T,
@@ -48,6 +51,7 @@ SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
   y <- initial.state
   
   SEIIR.output <- matrix(ncol=length(initial.state)+1, nrow=1)
+  # SRI TODO: if you add new compartments, you need to add them here
   colnames(SEIIR.output) <- c("time", "S", "E",
                               "Ia_sh",
                               "Im_syU", "Im_sh", "Im_syT", "Im_abx",
@@ -76,6 +80,7 @@ SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
     
     t <- t+step.size 
     
+    # SRI TODO: work through together how we will adjust lambda for our other compartments
     lambda <- (param["beta.scaled"]*(y["Is_syU"] + y["Is_syT"])) + 
       (v.sh*param["beta.scaled"]*y["Is_sh"]) + 
       (v.a*param["beta.scaled"]*y["Ia_sh"]) + 
@@ -89,6 +94,7 @@ SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
     #calculate the probability of infection and recovery in this time step
     #probability that thing happens in a given time step, updates every time step. range 0-1
     #need one of these per arrow, moderate/severe specific etc
+    # SRI TODO: you will need to add probabilities for each added arrow. We can talk through this! (note to self: make sure won't go negative in code later..)
     Pr.expose <- 1-exp(-step.size*lambda)
     
     Pr.infect.all <- 1-exp(-step.size*param["sigma"])
@@ -101,6 +107,7 @@ SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
     Pr.sU.shed <- 1-exp(-step.size*param["alpha.s"]) #the rate at which severes who don't seek care move to shed
     Pr.sT.abx <- 1-exp(-step.size*param["tau"]) #the rate at which severes who do seek care move to abx
     
+    # Abby TODO: figure out why some lines are commented out
     Pr.a.recover <- 1-exp(-step.size*param["gamma.a"]) #rate at which asymptomatics recover
     Pr.m.shed.recover <- 1-exp(-step.size*param["gamma.m"]) #this only incorporates the rate at which shedding moderates recover
     Pr.m.shed.die <- 1-exp(-step.size*param["mu.m"]) #this only incorporates the rate at which shedding moderates die
@@ -117,6 +124,7 @@ SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
     #using prob from above, is the actual number based on prob and denom (num ppl in that box)
     #should be whole numbers. if aren't something's wrong
     #rbinom(num observations, num trials, prob success each trial)
+    # SRI TODO: will need to add random samples for each added arrow to the model (this is where we will need to be careful with going negative)
     incident.exposed <- rbinom(1, y["S"], Pr.expose) #the number who go S to E
     
     incident.cases.all <- rbinom(1, y["E"], Pr.infect.all) #this is the number that leave E
@@ -154,6 +162,7 @@ SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
     abx.recovered.s <- rbinom(1, y["Is_abx"], Pr.s.abx.recover) #number of severes who recover after abx in this time step
     
     #Find the deltas for each compartment
+    # SRI TODO: adjust this based on added compartments and arrows
     dS <- -incident.exposed
     dE <- incident.exposed - incident.cases.a - 
       incident.cases.symp.mU - incident.cases.symp.mT - 
@@ -176,6 +185,7 @@ SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
     dE
     sum(dIa.sh,dIm.syU,dIm.syT,dIs.syU,dIs.syT)
     
+    # SRI TODO: add deltas for additional compartment and add additional incidences to z
     deltas <- c(dS,dE,dIa.sh,dIm.syU,dIm.sh,dIm.syT,dIm.abx,dIs.syU,dIs.sh,dIs.syT,dIs.abx,dR,dD,dR.abx) # calculate step sizes. this is net change for each box
     z <- c(incident.exposed,
            incident.cases.a,

@@ -15,3 +15,4 @@ The following R packages are required for this project:
 - [`lhs`](https://cran.r-project.org/package=lhs) - for generating Latin Hypercube Samples
 - [`reshape2`](https://cran.r-project.org/package=reshape2) - for reshaping data, including the `melt` function
 - [`stringr`](https://cran.r-project.org/package=stringr) - for string manipulation
+- [`tidyr`]

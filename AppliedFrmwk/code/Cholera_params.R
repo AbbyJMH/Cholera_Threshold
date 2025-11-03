@@ -1,5 +1,5 @@
 
-h <- 100 #number of stochastic runs #number of points
+h <- 2 #number of stochastic runs #number of points
 set.seed(3) #set a single seed so runif() is the same each time
 seed <- runif(h)
 #create additional empty storage objects needed for over prop.m.abx
@@ -12,8 +12,12 @@ lhs <- maximinLHS(n=h,k=22) #n=num of points or simulations. #k= number of varia
 #   for use in creating a Latin Hypercube Design. 
 #   This function attempts to optimize the sample by maximizing the 
 #   minium distance between design points (maximin criteria).
+
 # R0.min <- 2.0 #reproductive number. use to calc beta (transmission rate)
 # R0.max <- 2.5 #1.3-2.0; 2.3-2.8
+
+# SRI TODO: add min and max values for new parameters here (Abby note to self: does this apply to proportions?)
+
 sigma.min <- 0.62 #rate at which symptoms develop; 1/latent or incubation #X
 sigma.max <- 0.77 #X
 v.a.min <- 0.15 #modifier; reduction in transmission for asymptomatic vs severe symptomatic #X
