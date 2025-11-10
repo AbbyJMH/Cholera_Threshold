@@ -61,6 +61,9 @@ run.model <- function(R0.min, R0.max, k, epsilon.m.T.min, epsilon.m.T.max) {
   source("Cholera_Function.R")
   source("Cholera_params.R")
 
+  # SRI TODO: will need to add your new parameters here.
+  # Be careful with this one! The order in which the parameters are stored in lhs matters
+  # We can do it together if needed
   lhs.params <- cbind(
     R0 = lhs[,1]*(R0.max-R0.min)+R0.min,
     sigma = lhs[,2]*(sigma.max-sigma.min)+sigma.min,
@@ -105,6 +108,7 @@ run.model <- function(R0.min, R0.max, k, epsilon.m.T.min, epsilon.m.T.max) {
     for (i in 1:h) {
       # Define initial state and parameters (same as your original code)
       n.seed.events <- 50
+      # SRI TODO: add your additional state variable here
       initial.state <- c(S=S_0-(n.seed.events), 
                          E=n.seed.events,
                          Ia_sh=0, Im_syU=0, Im_sh=0, Im_syT=0, Im_abx=0, 
@@ -112,6 +116,7 @@ run.model <- function(R0.min, R0.max, k, epsilon.m.T.min, epsilon.m.T.max) {
                          R=0, D=0, R_abx=0)
       set.seed <- seed[[i]]
       
+      # SRI TODO: add your additional parameters here
       # Define SEIR parameters
       R0 <- as.numeric(lhs.params[i,"R0"])
       sigma <- as.numeric(lhs.params[i,"sigma"])
@@ -136,6 +141,8 @@ run.model <- function(R0.min, R0.max, k, epsilon.m.T.min, epsilon.m.T.max) {
       mu.m <- as.numeric(lhs.params[i,"mu.m"])
       mu.s <- as.numeric(lhs.params[i,"mu.s"])
       
+      # SRI TODO: Don't make any changes here yet, but we will have a discussion about this part
+      # Unless it is changed it is important to use an initial condition with 0 people starting in the new susceptibles compartment you are each adding
       #calculate beta given R0 etc
       beta <- R0/(
         ((epsilon.a*v.a)/(gamma.a))+
@@ -152,6 +159,7 @@ run.model <- function(R0.min, R0.max, k, epsilon.m.T.min, epsilon.m.T.max) {
       delta <- 0.5
       q <- (alpha.m * prop.abx) / ((alpha.m * prop.abx) - (delta * tau * prop.abx) + (delta * tau))
       
+      # SRI TODO: make this match the inputs that you defined for SEIIRfunct in the Cholera_Function.R file
       # Run the SEIIR model
       temp.outputs <- SEIIRfunct(beta, sigma, v.a, v.m, v.sh, v.abx,
                                  epsilon.a, epsilon.s, epsilon.m.T, epsilon.s.T,
