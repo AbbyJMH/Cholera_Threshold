@@ -60,7 +60,8 @@ SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
   SEIIR.output[1,] <- c(t,y)
   SEIIR.output
   # SRI TODO: you will need to change 18 to 19 in the line below
-  # then add whatever you will call new cases going from your new susceptibles box to E. For example, incident.exposed.WASH
+  # then add whatever you will call new cases going from your new susceptibles box to E. 
+  #For example, incident.exposed.WASH
   incidences <- matrix(ncol=18+1, nrow=1)
   colnames(incidences) <- c("time",
                             "incident.exposed",
@@ -82,7 +83,7 @@ SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
     
     t <- t+step.size 
     
-    # SRI TODO: work through together how we will adjust lambda for our other compartments
+    # SRI TODO: we will discuss this together, but you don't need to make any changes
     lambda <- (param["beta.scaled"]*(y["Is_syU"] + y["Is_syT"])) + 
       (v.sh*param["beta.scaled"]*y["Is_sh"]) + 
       (v.a*param["beta.scaled"]*y["Ia_sh"]) + 
