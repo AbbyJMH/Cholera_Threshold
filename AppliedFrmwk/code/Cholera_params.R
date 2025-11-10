@@ -7,6 +7,8 @@ seed <- runif(h)
 j<-1
 labels<-c()
 S_0 <- 500000
+
+## SRI TODO: how many parameters are you adding to the model? add that number to 22 below
 lhs <- maximinLHS(n=h,k=22) #n=num of points or simulations. #k= number of variables or columns
 # Draws a Latin Hypercube Sample from a set of uniform distributions 
 #   for use in creating a Latin Hypercube Design. 

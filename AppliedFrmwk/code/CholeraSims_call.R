@@ -58,12 +58,12 @@ create.variable.params <- function(R0.min.values, R0.max.values, epsilon.values)
 ## (epsilon)
 run.model <- function(R0.min, R0.max, k, epsilon.m.T.min, epsilon.m.T.max) {
 
+  # SRI TODO: if you change any file names, make sure you implement those changes here so it reads the correct files
   source("Cholera_Function.R")
   source("Cholera_params.R")
 
   # SRI TODO: will need to add your new parameters here.
-  # Be careful with this one! The order in which the parameters are stored in lhs matters
-  # We can do it together if needed
+  # each line needs to reference a different column of lhs, but it doesn't matter which references which
   lhs.params <- cbind(
     R0 = lhs[,1]*(R0.max-R0.min)+R0.min,
     sigma = lhs[,2]*(sigma.max-sigma.min)+sigma.min,
@@ -108,7 +108,7 @@ run.model <- function(R0.min, R0.max, k, epsilon.m.T.min, epsilon.m.T.max) {
     for (i in 1:h) {
       # Define initial state and parameters (same as your original code)
       n.seed.events <- 50
-      # SRI TODO: add your additional state variable here
+      # SRI TODO: add your additional state variable here, set the initial condition to 0 for that state
       initial.state <- c(S=S_0-(n.seed.events), 
                          E=n.seed.events,
                          Ia_sh=0, Im_syU=0, Im_sh=0, Im_syT=0, Im_abx=0, 
@@ -216,7 +216,7 @@ summarize.incidences <- function(INCID.final) {
     mutate(untreated.cases.m = shedding.cases.mU + shedding.cases.mT) %>%
     mutate(incident.cases.symp.m = incident.cases.symp.mU + incident.cases.symp.mT) %>%
     mutate(incident.cases.symp.s = incident.cases.symp.sU + incident.cases.symp.sT) %>%
-    mutate(incident.cases.all = incident.exposed)
+    mutate(incident.cases.all = incident.exposed) ## SRI TODO: change this to incident.exposed+incident.exposed.WASH or whatever you named that in the functions file
   
   # Calculate mean and quantiles for each column, grouped by prop.m.abx
   INCID.summary <- INCID.summed %>%
@@ -364,8 +364,9 @@ averted.incidence.processing <- function(dataset) {
   
   INCID.adjusted <- INCID.adjusted %>%
     mutate(total.abx.cases = adjusted.abx.cases.m.base + adjusted.abx.cases.s.base) %>%
-    mutate(adjusted.incident.exposed.base = -adjusted.incident.exposed.base) %>%
-    mutate(inf.averted = adjusted.incident.exposed.base / S_0) %>%
+    mutate(adjusted.incident.exposed.all.base = adjusted.incident.exposed.base) %>% # SRI TODO: change adjusted.incident.exposed.base to adjusted.incident.exposed.base + adjusted.incident.exposed.WASH.base (or whatever you named your equivalent)
+    mutate(adjusted.incident.exposed.all.base = -adjusted.incident.exposed.all.base) %>% # SRI TODO: I changed adjusted.incident.exposed.base to adjusted.incident.exposed.all.base. You don't have to do anything
+    mutate(inf.averted = adjusted.incident.exposed.all.base / S_0) %>% ## same here, no changes needed
     mutate(addnl.abx = total.abx.cases / S_0) 
   
   # Create the color group column 

@@ -59,6 +59,8 @@ SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
                               "R", "D", "R_abx")
   SEIIR.output[1,] <- c(t,y)
   SEIIR.output
+  # SRI TODO: you will need to change 18 to 19 in the line below
+  # then add whatever you will call new cases going from your new susceptibles box to E. For example, incident.exposed.WASH
   incidences <- matrix(ncol=18+1, nrow=1)
   colnames(incidences) <- c("time",
                             "incident.exposed",
@@ -70,7 +72,7 @@ SEIIRfunct <- function(beta, sigma, v.a, v.m, v.sh, v.abx,
                             "nat.recovered.a",
                             "nat.recovered.m", "died.m", "abx.recovered.m",
                             "nat.recovered.s", "died.s", "abx.recovered.s")
-  incidences[1,] <- rep(0,18+1)
+  incidences[1,] <- rep(0,18+1) #SRI TODO: change this 18 to 19 as well
   
   while(
     y["E"]>0 | 
